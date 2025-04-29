@@ -595,8 +595,8 @@
         // Function to reset all times
         function resetAllTimes() {
             if (confirm("Are you sure you want to reset all actual times? This cannot be undone.")) {
-                // Reset all actual times except the start checkpoint
-                for (let i = 1; i < checkpointData.length; i++) {
+                // Reset all actual times
+                for (let i = 0; i < checkpointData.length; i++) {
                     checkpointData[i].actualTime = "";
                     checkpointData[i].estimatedTime = checkpointData[i].originalEstimatedTime;
                 }
@@ -690,15 +690,11 @@
                                 <span class="detail-label">Actual Arrival</span>
                 `;
                 
-                // For start, display actual time as text. For others, show input field
-                if (index === 0) {
-                    html += `<span class="detail-value">${displayActualTime}</span>`;
-                } else {
-                    // Create a time input with the current value if any
-                    const inputValue = checkpoint.actualTime ? displayActualTime : "";
-                    html += `<input type="time" class="time-input" value="${inputValue}" 
-                            onchange="handleActualTimeInput(${index}, this.value)">`;
-                }
+		// Create a time input with the current value if any
+                const inputValue = checkpoint.actualTime ? displayActualTime : "";
+                html += `<input type="time" class="time-input" value="${inputValue}" 
+                onchange="handleActualTimeInput(${index}, this.value)">`;
+                
                 
                 html += `
                             </div>
