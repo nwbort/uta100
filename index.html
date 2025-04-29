@@ -494,6 +494,10 @@
 
         // Function to parse time string (HH:MM:SS) to minutes
         function parseTimeToMinutes(timeStr) {
+	    if (!timeStr || timeStr === "") {
+	        console.log("Warning: Empty time string provided to parseTimeToMinutes");
+	        return 0; // Return 0 for empty string instead of NaN
+	    }
             const parts = timeStr.split(':');
             const hours = parseInt(parts[0], 10);
             const minutes = parseInt(parts[1], 10);
@@ -503,6 +507,11 @@
 
         // Function to format minutes to time string (HH:MM:SS)
 	function formatMinutesToTime(totalMinutes, includeSeconds = false) {
+	    // Check if totalMinutes is a valid number
+	    if (isNaN(totalMinutes)) {
+	        console.log(`Warning: NaN value detected in formatMinutesToTime: ${totalMinutes}`);
+	        return "00:00";
+	    }
 	    // Keep within 24 hours
 	    totalMinutes = totalMinutes % (24 * 60);
 	    
@@ -524,21 +533,43 @@
 
         // Function to add time strings (HH:MM:SS + HH:MM:SS)
         function addTimes(time1, time2) {
+	    // Check for empty input
+	    if (!time1 || time1 === "") {
+	        console.log("Warning: Empty time1 in addTimes");
+	        return time2 || "00:00:00";
+	    }
+	    if (!time2 || time2 === "") {
+	        console.log("Warning: Empty time2 in addTimes");
+	        return time1;
+	    }
+	
             const time1Minutes = parseTimeToMinutes(time1);
             const time2Minutes = parseTimeToMinutes(time2);
             return formatMinutesToTime(time1Minutes + time2Minutes, time1.split(':').length > 2 || time2.split(':').length > 2);
         }
 
         // Function to update estimated times based on actual times
-        function updateEstimatedTimes() {
-            // Find the last checkpoint with an actual time
-            let lastActualIndex = 0; // Start with the start checkpoint
-            
-            for (let i = 0; i < checkpointData.length; i++) {
-                if (checkpointData[i].actualTime) {
-                    lastActualIndex = i;
-                }
-            }
+	function updateEstimatedTimes() {
+	    // Find the last checkpoint with an actual time
+	    let lastActualIndex = -1; // Changed from 0 to -1 to indicate no actual times
+	    
+	    for (let i = 0; i < checkpointData.length; i++) {
+	        if (checkpointData[i].actualTime) {
+	            lastActualIndex = i;
+	        }
+	    }
+	    
+	    // If no actual times are found, revert to original estimates
+	    if (lastActualIndex === -1) {
+	        for (let i = 0; i < checkpointData.length; i++) {
+	            checkpointData[i].estimatedTime = checkpointData[i].originalEstimatedTime;
+		}
+	       
+		// Save to localStorage and exit
+		localStorage.setItem('uta100_data', JSON.stringify(checkpointData));
+		renderCheckpoints();
+		return;
+	    }
             
             // Update all checkpoints after the last actual time
             for (let i = lastActualIndex + 1; i < checkpointData.length; i++) {
