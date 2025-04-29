@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTA100 Support Crew Tracker</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary-color: #f59e0b;
+            --light-bg: #f3f4f6;
+            --dark-text: #1f2937;
+            --light-text: #6b7280;
+            --white: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .info-box {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .disclaimer {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .checkpoint {
+            background-color: var(--white);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .checkpoint-header {
+            padding: 0.75rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .checkpoint-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .checkpoint-type {
+            font-size: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
+        }
+        
+        .checkpoint-body {
+            padding: 1rem;
+        }
+        
+        .checkpoint-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        .time-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .checkpoint-notes {
+            background-color: var(--light-bg);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        
+        .notes-label {
+            font-weight: 500;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            color: var(--light-text);
+        }
+        
+        .location-link {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .location-link:hover {
+            background-color: #e69008;
+        }
+        
+        .badge {
+            display: inline-block;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .poi-badge {
+            background-color: #a855f7;
+        }
+        
+        .cp-badge {
+            background-color: #3b82f6;
+        }
+        
+        .wp-badge {
+            background-color: #10b981;
+        }
+        
+        .start-finish-badge {
+            background-color: #f59e0b;
+        }
+        
+        .crew-badge {
+            background-color: #22c55e;
+        }
+        
+        .support-crew-access {
+            margin-top: 0.5rem;
+            font-weight: 500;
+            color: #22c55e;
+            font-size: 0.9rem;
+        }
+        
+        .warning {
+            margin-top: 0.5rem;
+            color: #ef4444;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .reset-button {
+            display: block;
+            margin: 1rem auto;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .reset-button:hover {
+            background-color: #dc2626;
+        }
+        
+        /* Mobile optimisations */
+        @media (max-width: 480px) {
+            .checkpoint-details {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .checkpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .checkpoint-distance {
+                margin-top: 0.25rem;
+            }
+        }
+        
+        /* Status message */
+        .status {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #22c55e;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            box-shadow: var(--card-shadow);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .status.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>UTA100 Support Crew Tracker</h1>
+        <div><button id="reset-button" class="reset-button">Reset all times</button></div>
+    </header>
+    
+    <div class="container">     
+        <div id="checkpoints-container">
+            <!-- Checkpoints will be added here by JavaScript -->
+            <div class="loading">Loading checkpoint data...</div>
+        </div>
+        
+    </div>
+    
+    <div id="status-message" class="status">Saved!</div>
+    
+    <script>
+        // Checkpoint data directly from your provided table
+        const checkpointData = [
+            {
+                location: "Start",
+                type: "Start",
+                originalEstimatedTime: "06:40:00",
+                incrementalTime: "",
+                actualTime: "",
+                estimatedTime: "06:40:00",
+                distance: 0.0,
+                distanceInLeg: 0.0,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Narrow Neck",
+                type: "POI",
+                originalEstimatedTime: "06:57:00",
+                incrementalTime: "00:17:00",
+                actualTime: "",
+                estimatedTime: "06:57:00",
+                distance: 2.8,
+                distanceInLeg: 2.8,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Medlow Gap",
+                type: "CP1",
+                originalEstimatedTime: "08:40:00",
+                incrementalTime: "01:43:00",
+                actualTime: "",
+                estimatedTime: "08:40:00",
+                distance: 16.6,
+                distanceInLeg: 13.8,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Foggy Knob",
+                type: "CP2",
+                originalEstimatedTime: "09:31:00",
+                incrementalTime: "00:51:00",
+                actualTime: "",
+                estimatedTime: "09:31:00",
+                distance: 24.1,
+                distanceInLeg: 7.5,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Turnaround point",
+                type: "POI",
+                originalEstimatedTime: "09:53:00",
+                incrementalTime: "00:22:00",
+                actualTime: "",
+                estimatedTime: "09:53:00",
+                distance: 26.8,
+                distanceInLeg: 2.7,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Six Foot Track",
+                type: "CP3",
+                originalEstimatedTime: "11:19:00",
+                incrementalTime: "01:26:00",
+                actualTime: "",
+                estimatedTime: "11:19:00",
+                distance: 37.7,
+                distanceInLeg: 10.9,
+                notes: "Checkpoint 3 is on private farmland just after Aspinal Road intersection on Megalong Valley Road. Please obey the traffic controller and drive carefully as you enter as runners will be on road in this section of the course.",
+                locationLink: "https://maps.app.goo.gl/aqSB93Sk1SdZXcZX6",
+                locationName: "Megalong Cemetery",
+                hasSupportCrewAccess: true
+            },
+            {
+                location: "Six Foot Track start",
+                type: "POI",
+                originalEstimatedTime: "12:03:00",
+                incrementalTime: "00:44:00",
+                actualTime: "",
+                estimatedTime: "12:03:00",
+                distance: 42.6,
+                distanceInLeg: 4.9,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Six Foot Track water point",
+                type: "WP",
+                originalEstimatedTime: "12:33:00",
+                incrementalTime: "00:30:00",
+                actualTime: "",
+                estimatedTime: "12:33:00",
+                distance: 45.9,
+                distanceInLeg: 3.3,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Katoomba Aquatic Centre",
+                type: "CP4",
+                originalEstimatedTime: "14:08:00",
+                incrementalTime: "01:35:00",
+                actualTime: "",
+                estimatedTime: "14:08:00",
+                distance: 56.4,
+                distanceInLeg: 10.5,
+                notes: "Checkpoint 4 is located at Katoomba Sports and Aquatic Centre on Catalina Ave, Katoomba. There is special event parking in the Gully (Catalina Raceway). Follow event parking signs. You must not park on Catalina Ave, Peckmans Rd or Gates Ave in the vicinity of where the runners cross the road. You must obey all 'No Parking' signs. After parking, enter the Aquatic Centre via the normal front entrance and follow the directions to the basketball courts. The Aquatic Centre facilities close at 6pm however the basketball courts will remain open while the checkpoint is still operational. Support crews may bring their own food and fluids into the Aquatic centre for supporting their runners.",
+                locationLink: "https://maps.app.goo.gl/vNZhctNb85rM6BjN8",
+                locationName: "Katoomba Sports & Aquatic Centre",
+                hasSupportCrewAccess: true
+            },
+            {
+                location: "Fairmont Resort",
+                type: "CP5",
+                originalEstimatedTime: "15:47:00",
+                incrementalTime: "01:39:00",
+                actualTime: "",
+                estimatedTime: "15:47:00",
+                distance: 68.4,
+                distanceInLeg: 12.0,
+                notes: "Checkpoint 5 is located at Fairmont Resort, Leura. Please drive carefully as you enter Fairmont Resort from Watkins Rd/Sublime Point Road as runners will be on road in this section of the course. Please obey all traffic controllers, ‘No Parking’ signs, and respect the driveways and lawns of the residents in this area. Parking on lawns or in front of resident driveways along any road on the UTA course is prohibited.<br><br>Once you enter Fairmont Resort there is ample parking in the bottom Fairmont Resort Carpark. Please be mindful of resort guests, children, and patrons of Leura Golf Course when finding a place to park at Fairmont Resort. After you have parked, please walk and make your way into the Fairmont Resort. Once inside the resort walk to the stairs and head down to the checkpoint area. Please be mindful of resort and restaurant guests. Once at the checkpoint location make your way outside to the support crew/spectator zone. Do not congregate inside the checkpoint area. This space is only for runners and one support crew member with a wristband. Fairmont Resort and services are open to the public.",
+                locationLink: "https://maps.app.goo.gl/ocAnmFCDvUFYaNAo6",
+                locationName: "Fairmont Resort Blue Mountains - MGallery Collection",
+                hasSupportCrewAccess: true
+            },
+            {
+                location: "QVH",
+                type: "CP6",
+                originalEstimatedTime: "17:26:00",
+                incrementalTime: "01:39:00",
+                actualTime: "",
+                estimatedTime: "17:26:00",
+                distance: 79.5,
+                distanceInLeg: 11.1,
+                notes: "Sunset at 5:05pm. Checkpoint 6 is located at Queen Victoria Hospital at the end of Kings Tableland Road, Wentworth Falls. This is the last checkpoint you can see your runner before the finish.<br><br>We suggest that you leave early to allow for delays, and carpool with other Support Crews/ Spectators where possible. The parking is predominantly on rough uneven surfaces, and a couple of sections will be 4WD only.<br><br>Note that if it rains on race day many parking areas will become boggy and unusable, so we would request that you consider whether you need to visit this Checkpoint in those circumstances.\nNote that you must not park alongside King Tableland Road on the way into and out of the Checkpoint. Parking here means that two way traffic is no longer possible, causing huge delays for everyone. Cars that park here will be towed away. Please proceed down to the Checkpoint as there is almost always sufficient parking. A traffic controller is on site to assist spectators in finding available car spaces.",
+                locationLink: "https://maps.app.goo.gl/31mQQq5yeZyPxhsD8",
+                locationName: "Queen Victoria Hospital",
+                hasSupportCrewAccess: true
+            },
+            {
+                location: "Emergency Aid station",
+                type: "WP",
+                originalEstimatedTime: "19:04:00",
+                incrementalTime: "01:38:00",
+                actualTime: "",
+                estimatedTime: "19:04:00",
+                distance: 92.6,
+                distanceInLeg: 13.1,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Echo Point",
+                type: "POI",
+                originalEstimatedTime: "20:15:00",
+                incrementalTime: "01:11:00",
+                actualTime: "",
+                estimatedTime: "20:15:00",
+                distance: 98.5,
+                distanceInLeg: 5.9,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Board Walk",
+                type: "POI",
+                originalEstimatedTime: "20:38:00",
+                incrementalTime: "00:23:00",
+                actualTime: "",
+                estimatedTime: "20:38:00",
+                distance: 100.9,
+                distanceInLeg: 2.4,
+                notes: "",
+                locationLink: "",
+                hasSupportCrewAccess: false
+            },
+            {
+                location: "Finish",
+                type: "Finish",
+                originalEstimatedTime: "20:40:00",
+                incrementalTime: "00:02:00",
+                actualTime: "",
+                estimatedTime: "20:40:00",
+                distance: 101.2,
+                distanceInLeg: 0.3,
+                notes: "May need to catch the event bus to the finish line",
+                locationLink: "https://uta.utmb.world/runners/transport-parking",
+                locationName: "Scenic World",
+                hasSupportCrewAccess: true
+            }
+        ];
+
+        // Function to parse time string (HH:MM:SS) to minutes
+        function parseTimeToMinutes(timeStr) {
+            const parts = timeStr.split(':');
+            const hours = parseInt(parts[0], 10);
+            const minutes = parseInt(parts[1], 10);
+            const seconds = parts.length > 2 ? parseInt(parts[2], 10) : 0;
+            return (hours * 60) + minutes + (seconds / 60);
+        }
+
+        // Function to format minutes to time string (HH:MM:SS)
+	function formatMinutesToTime(totalMinutes, includeSeconds = false) {
+	    // Keep within 24 hours
+	    totalMinutes = totalMinutes % (24 * 60);
+	    
+	    // Correctly calculate hours and minutes
+	    const hours = Math.floor(totalMinutes / 60);
+	    const minutes = Math.floor(totalMinutes % 60);
+	    const seconds = Math.floor((totalMinutes * 60) % 60);
+	    
+	    const hoursStr = String(hours).padStart(2, '0');
+	    const minutesStr = String(minutes).padStart(2, '0');
+	    
+	    if (includeSeconds) {
+	        const secondsStr = String(seconds).padStart(2, '0');
+	        return `${hoursStr}:${minutesStr}:${secondsStr}`;
+	    } else {
+	        return `${hoursStr}:${minutesStr}`;
+	    }
+	}
+
+        // Function to add time strings (HH:MM:SS + HH:MM:SS)
+        function addTimes(time1, time2) {
+            const time1Minutes = parseTimeToMinutes(time1);
+            const time2Minutes = parseTimeToMinutes(time2);
+            return formatMinutesToTime(time1Minutes + time2Minutes, time1.split(':').length > 2 || time2.split(':').length > 2);
+        }
+
+        // Function to update estimated times based on actual times
+        function updateEstimatedTimes() {
+            // Find the last checkpoint with an actual time
+            let lastActualIndex = 0; // Start with the start checkpoint
+            
+            for (let i = 0; i < checkpointData.length; i++) {
+                if (checkpointData[i].actualTime) {
+                    lastActualIndex = i;
+                }
+            }
+            
+            // Update all checkpoints after the last actual time
+            for (let i = lastActualIndex + 1; i < checkpointData.length; i++) {
+                // Add incremental time to the last actual time to get the new estimated time
+                checkpointData[i].estimatedTime = addTimes(
+                    checkpointData[lastActualIndex].actualTime,
+                    checkpointData[i].incrementalTime
+                );
+                
+                // For the first checkpoint after the last actual, use its original incremental time
+                if (i === lastActualIndex + 1) {
+                    checkpointData[i].estimatedTime = addTimes(
+                        checkpointData[lastActualIndex].actualTime,
+                        checkpointData[i].incrementalTime
+                    );
+                } else {
+                    // For later checkpoints, add the sum of all incremental times from the last actual
+                    let totalIncrementalTime = "00:00:00";
+                    for (let j = lastActualIndex + 1; j <= i; j++) {
+                        totalIncrementalTime = addTimes(totalIncrementalTime, checkpointData[j].incrementalTime);
+                    }
+                    checkpointData[i].estimatedTime = addTimes(
+                        checkpointData[lastActualIndex].actualTime,
+                        totalIncrementalTime
+                    );
+                }
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('uta100_data', JSON.stringify(checkpointData));
+            
+            // Re-render the checkpoints
+            renderCheckpoints();
+        }
+
+        // Function to handle actual time input
+        function handleActualTimeInput(index, value) {
+            if (value) {
+                // Add seconds if not provided
+                if (value.split(':').length === 2) {
+                    value = value + ":00";
+                }
+                
+                checkpointData[index].actualTime = value;
+                showStatusMessage('Changes saved!');
+                updateEstimatedTimes();
+            } else {
+                // If the field is cleared, remove the actual time
+                checkpointData[index].actualTime = "";
+                updateEstimatedTimes();
+            }
+        }
+
+        // Function to reset all times
+        function resetAllTimes() {
+            if (confirm("Are you sure you want to reset all actual times? This cannot be undone.")) {
+                // Reset all actual times except the start checkpoint
+                for (let i = 1; i < checkpointData.length; i++) {
+                    checkpointData[i].actualTime = "";
+                    checkpointData[i].estimatedTime = checkpointData[i].originalEstimatedTime;
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('uta100_data', JSON.stringify(checkpointData));
+                
+                // Re-render the checkpoints
+                renderCheckpoints();
+                
+                showStatusMessage('All times have been reset');
+            }
+        }
+
+        // Function to display status message
+        function showStatusMessage(message) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.classList.add('visible');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                statusEl.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Function to format time for display (remove seconds if all zeros)
+        function formatTimeForDisplay(timeStr) {
+            if (!timeStr) return "";
+            
+            const parts = timeStr.split(':');
+            if (parts.length === 3 && parts[2] === "00") {
+                return `${parts[0]}:${parts[1]}`;
+            }
+            return timeStr;
+        }
+
+        // Function to get badge class based on checkpoint type
+        function getBadgeClass(type) {
+            if (type === 'POI') return 'poi-badge';
+            if (type === 'WP') return 'wp-badge';
+            if (type.startsWith('CP')) return 'cp-badge';
+            return 'start-finish-badge';
+        }
+
+        // Format links in notes
+        function formatNotes(notes) {
+            if (!notes) return "";
+            
+            // Replace URLs with clickable links
+            return notes.replace(/\(https:\/\/[^)]+\)/g, function(match) {
+                const url = match.substring(1, match.length - 1);
+                return `(<a href="${url}" target="_blank" style="color:#3b82f6;">link</a>)`;
+            });
+        }
+
+        // Function to render all checkpoints
+        function renderCheckpoints() {
+            const container = document.getElementById('checkpoints-container');
+            container.innerHTML = ''; // Clear previous content
+            
+            checkpointData.forEach((checkpoint, index) => {
+                // Create checkpoint card
+                const card = document.createElement('div');
+                card.className = 'checkpoint';
+                
+                // Determine checkpoint type badge class
+                const badgeClass = getBadgeClass(checkpoint.type);
+                
+                // Display estimated time (removing seconds if they're :00)
+                const displayEstimatedTime = formatTimeForDisplay(checkpoint.estimatedTime);
+                const displayActualTime = formatTimeForDisplay(checkpoint.actualTime);
+                
+                // Create checkpoint HTML
+                let html = `
+                    <div class="checkpoint-header">
+                        <div>
+                            <span class="checkpoint-title">${checkpoint.location}</span>
+                            <span class="badge ${badgeClass}">${checkpoint.type}</span>
+                            ${checkpoint.hasSupportCrewAccess ? '<span class="badge crew-badge">Crew Access</span>' : ''}
+                        </div>
+                        <div class="checkpoint-distance">${checkpoint.distance} km</div>
+                    </div>
+                    <div class="checkpoint-body">
+                        <div class="checkpoint-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Expected Arrival</span>
+                                <span class="detail-value">${displayEstimatedTime}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Actual Arrival</span>
+                `;
+                
+                // For start, display actual time as text. For others, show input field
+                if (index === 0) {
+                    html += `<span class="detail-value">${displayActualTime}</span>`;
+                } else {
+                    // Create a time input with the current value if any
+                    const inputValue = checkpoint.actualTime ? displayActualTime : "";
+                    html += `<input type="time" class="time-input" value="${inputValue}" 
+                            onchange="handleActualTimeInput(${index}, this.value)">`;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                `;
+                
+                // Add location link if available
+                if (checkpoint.locationLink) {
+                    const locationName = checkpoint.locationName || checkpoint.location;
+                    html += `
+                        <a href="${checkpoint.locationLink}" target="_blank" class="location-link">
+                            Get Directions to ${locationName}
+                        </a>
+                    `;
+                }
+                
+                // Add support crew access note if relevant
+                if (checkpoint.hasSupportCrewAccess) {
+                    html += `<div class="support-crew-access">Support crew can access this checkpoint</div>`;
+                }
+                
+                // Add notes if available
+                if (checkpoint.notes) {
+                    html += `
+                        <div class="checkpoint-notes">
+                            <div class="notes-label">Notes</div>
+                            ${formatNotes(checkpoint.notes)}
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        // Initialize the app
+        function init() {
+            // Check for saved data
+            const savedData = localStorage.getItem('uta100_data');
+            if (savedData) {
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    // Update our checkpointData with saved values
+                    parsedData.forEach((savedCP, index) => {
+                        if (index < checkpointData.length) {
+                            checkpointData[index].actualTime = savedCP.actualTime;
+                            checkpointData[index].estimatedTime = savedCP.estimatedTime;
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+            
+            // Make the handleActualTimeInput function available globally
+            window.handleActualTimeInput = handleActualTimeInput;
+            
+            // Set up reset button
+            document.getElementById('reset-button').addEventListener('click', resetAllTimes);
+            
+            // Render the checkpoints
+            renderCheckpoints();
+        }
+
+        // Start the app
+        window.onload = init;
+    </script>
+</body>
+</html>
